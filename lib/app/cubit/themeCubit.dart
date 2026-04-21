@@ -1,9 +1,8 @@
-
 // ignore_for_file: file_names
 
-import 'package:financy_ui/shared/utils/color_utils.dart';
-import 'package:financy_ui/shared/utils/locale_utils.dart';
-import 'package:financy_ui/shared/utils/theme_utils.dart';
+import 'package:btl/shared/utils/color_utils.dart';
+import 'package:btl/shared/utils/locale_utils.dart';
+import 'package:btl/shared/utils/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
