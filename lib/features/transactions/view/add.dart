@@ -2,22 +2,22 @@
 
 import 'dart:developer';
 
-import 'package:financy_ui/features/Account/cubit/manageMoneyCubit.dart';
-import 'package:financy_ui/features/Account/models/money_source.dart';
-import 'package:financy_ui/features/transactions/Cubit/transactionCubit.dart';
-import 'package:financy_ui/features/Users/Cubit/userCubit.dart';
-import 'package:financy_ui/features/transactions/Cubit/transctionState.dart';
-import 'package:financy_ui/features/transactions/models/transactionsModels.dart';
-import 'package:financy_ui/shared/utils/generateID.dart';
-import 'package:financy_ui/shared/widgets/resultDialogAnimation.dart';
-import 'package:financy_ui/shared/utils/mappingIcon.dart';
-import 'package:financy_ui/core/constants/icons.dart';
-import 'package:financy_ui/features/Categories/models/categoriesModels.dart';
-import 'package:financy_ui/shared/utils/color_utils.dart';
+import 'package:btl/features/Account/cubit/manageMoneyCubit.dart';
+import 'package:btl/features/Account/models/money_source.dart';
+import 'package:btl/features/transactions/Cubit/transactionCubit.dart';
+import 'package:btl/features/Users/Cubit/userCubit.dart';
+import 'package:btl/features/transactions/Cubit/transctionState.dart';
+import 'package:btl/features/transactions/models/transactionsModels.dart';
+import 'package:btl/shared/utils/generateID.dart';
+import 'package:btl/shared/widgets/resultDialogAnimation.dart';
+import 'package:btl/shared/utils/mappingIcon.dart';
+import 'package:btl/core/constants/icons.dart';
+import 'package:btl/features/Categories/models/categoriesModels.dart';
+import 'package:btl/shared/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:financy_ui/l10n/app_localizations.dart';
-import 'package:financy_ui/core/constants/colors.dart';
+// import 'package:btl/l10n/app_localizations.dart';
+import 'package:btl/core/constants/colors.dart';
 
 // Helper class for validation results
 class ValidationResult {
@@ -69,9 +69,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   late List<MoneySource> listAccounts;
 
   // Helper function for localization
-  String _localText(String Function(AppLocalizations) getter) {
-    final appLocal = AppLocalizations.of(context);
-    return appLocal != null ? getter(appLocal) : '';
+  String _localText(String text) {
+    // Tạm thời trả về text gốc vì l10n có thể chưa sẵn sàng
+    return text;
   }
 
   void _populateFieldsForEditing() {
@@ -180,7 +180,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 )
                 : null,
         title: Text(
-          isEditing ? 'Edit Transaction' : _localText((l) => l.add),
+          isEditing ? 'Sửa giao dịch' : 'Thêm giao dịch',
           style: theme.textTheme.titleLarge,
         ),
         centerTitle: true,
@@ -212,9 +212,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 children: [
-                  _buildTabButton(_localText((l) => l.income), 0),
+                  _buildTabButton('Thu nhập', 0),
                   SizedBox(width: 8),
-                  _buildTabButton(_localText((l) => l.expense), 1),
+                  _buildTabButton('Chi tiêu', 1),
                 ],
               ),
             ),
@@ -228,7 +228,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     children: [
                       // Amount Field
                       _buildInputField(
-                        label: _localText((l) => l.transactionAmount),
+                        label: 'Số tiền giao dịch',
                         child: TextField(
                           controller: amountController,
                           keyboardType: TextInputType.number,
@@ -251,7 +251,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                       // Category Field
                       _buildSelectField(
-                        label: _localText((l) => l.category),
+                        label: 'Danh mục',
                         value: selectedCategory,
                         onTap: () => _showCategoryBottomSheet(),
                       ),
@@ -260,7 +260,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                       // Date Field
                       _buildSelectField(
-                        label: _localText((l) => l.dueDate),
+                        label: 'Ngày',
                         value: selectedDate,
                         onTap: () => _selectDate(),
                       ),
@@ -269,10 +269,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                       // Account Field
                       _buildSelectField(
-                        label: _localText((l) => l.account),
+                        label: 'Tài khoản',
                         value:
                             activeAccounts.isEmpty
-                                ? 'No accounts available'
+                                ? 'Không có tài khoản'
                                 : selectedAccount,
                         onTap:
                             activeAccounts.isEmpty
@@ -284,12 +284,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                       // Note Field
                       _buildInputField(
-                        label: _localText((l) => l.note),
+                        label: 'Ghi chú',
                         child: TextField(
                           controller: noteController,
                           maxLines: 3,
                           decoration: InputDecoration(
-                            hintText: 'Add a note (optional)',
+                            hintText: 'Thêm ghi chú (tùy chọn)',
                             border: InputBorder.none,
                             hintStyle: theme.textTheme.bodyMedium?.copyWith(
                               color: AppColors.textGrey,
@@ -312,16 +312,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               child: ElevatedButton(
                 onPressed: activeAccounts.isEmpty ? null : addTrans,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryBlue,
+                  backgroundColor: theme.colorScheme.primary,
                   padding: EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: Text(
-                  isEditing ? 'Update' : _localText((l) => l.save),
+                  isEditing ? 'Cập nhật' : 'Lưu',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.textDark,
+                    color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -344,7 +344,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             availableCategories =
                 index == 0 ? defaultIncomeCategories : defaultExpenseCategories;
             // Reset selected category when switching types
-            selectedCategory = 'Select Category';
+            selectedCategory = 'Chọn danh mục';
           });
         },
         child: Container(
@@ -352,15 +352,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           decoration: BoxDecoration(
             color:
                 isSelected
-                    ? AppColors.positiveGreen
-                    : AppColors.grey.withOpacity(0.3),
+                    ? AppColors.green
+                    : AppColors.blue.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             text,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: isSelected ? AppColors.textDark : AppColors.textGrey,
+              color: isSelected ? Colors.white : AppColors.blue,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -386,7 +386,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           decoration: BoxDecoration(
             color: theme.cardColor,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+            border: Border.all(color: Colors.grey.withOpacity(0.3)),
           ),
           child: child,
         ),
@@ -420,7 +420,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               decoration: BoxDecoration(
                 color: theme.cardColor,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+                border: Border.all(color: Colors.grey.withOpacity(0.3)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -429,7 +429,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     value,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color:
-                          value.contains('Select')
+                          value.contains('Chọn') || value.contains('Select')
                               ? AppColors.textGrey
                               : theme.textTheme.bodyMedium?.color,
                     ),
@@ -466,14 +466,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.grey.withOpacity(0.3),
+                  color: Colors.grey.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               SizedBox(height: 16),
 
               Text(
-                _localText((l) => l.category),
+                'Danh mục',
                 style: theme.textTheme.titleLarge,
               ),
               SizedBox(height: 16),
@@ -481,9 +481,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               Expanded(
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
-                    crossAxisSpacing: 6,
-                    mainAxisSpacing: 6,
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
                     childAspectRatio: 1.0,
                   ),
                   itemCount: availableCategories.length,
@@ -503,53 +503,31 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         decoration: BoxDecoration(
                           color:
                               isSelected
-                                  ? categoryColor?.withOpacity(0.2)
+                                  ? categoryColor.withOpacity(0.2)
                                   : theme.cardColor,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color:
                                 isSelected
-                                    ? categoryColor ?? theme.colorScheme.primary
+                                    ? categoryColor
                                     : theme.dividerColor,
                             width: isSelected ? 2 : 1,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: theme.shadowColor.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
-                                color: categoryColor?.withOpacity(0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                IconMapping.stringToIcon(category.icon),
-                                color: categoryColor,
-                                size: 16,
-                              ),
+                            Icon(
+                              IconMapping.stringToIcon(category.icon),
+                              color: categoryColor,
+                              size: 24,
                             ),
                             SizedBox(height: 4),
                             Text(
-                              IconMapping.getLocalizedCategoryNameFromCategory(
-                                category,
-                                AppLocalizations.of(context),
-                              ),
+                              category.name,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
-                                color:
-                                    isSelected
-                                        ? categoryColor
-                                        : theme.textTheme.bodySmall?.color,
                               ),
                               textAlign: TextAlign.center,
                               maxLines: 1,
@@ -588,14 +566,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.grey.withOpacity(0.3),
+                  color: Colors.grey.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               SizedBox(height: 20),
 
               Text(
-                _localText((l) => l.account),
+                'Tài khoản',
                 style: theme.textTheme.titleLarge,
               ),
               SizedBox(height: 20),
@@ -612,15 +590,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       ),
                       SizedBox(height: 12),
                       Text(
-                        'No accounts available',
+                        'Không có tài khoản',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textGrey,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Please add a money source first',
-                        style: theme.textTheme.bodySmall?.copyWith(
                           color: AppColors.textGrey,
                         ),
                       ),
@@ -668,18 +639,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   bool _validate(double amount, MoneySource account) {
     if (account.isActive != true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Selected account is inactive'),
-          backgroundColor: Theme.of(context).primaryColor,
+        const SnackBar(
+          content: Text('Tài khoản đã chọn không hoạt động'),
         ),
       );
       return false;
     }
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Amount must be greater than 0'),
-          backgroundColor: Theme.of(context).primaryColor,
+        const SnackBar(
+          content: Text('Số tiền phải lớn hơn 0'),
         ),
       );
       return false;
@@ -702,29 +671,26 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     // Only validate balance for expense transactions
     if (selectedTransactionType == 1 && amount > effectiveBalance) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Insufficient balance in account'),
-          backgroundColor: Theme.of(context).primaryColor,
+        const SnackBar(
+          content: Text('Số dư tài khoản không đủ'),
         ),
       );
       return false;
     }
 
-    if (selectedCategory == 'Select Category') {
+    if (selectedCategory == 'Chọn danh mục' || selectedCategory == 'Select Category') {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please select a category'),
-          backgroundColor: Theme.of(context).primaryColor,
+        const SnackBar(
+          content: Text('Vui lòng chọn danh mục'),
         ),
       );
       return false;
     }
 
-    if (selectedAccount == 'Select Account') {
+    if (selectedAccount == 'Chọn tài khoản' || selectedAccount == 'Select Account') {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please select an account'),
-          backgroundColor: Theme.of(context).primaryColor,
+        const SnackBar(
+          content: Text('Vui lòng chọn tài khoản'),
         ),
       );
       return false;
@@ -763,7 +729,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       log('Error in addTrans: $e');
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('An error occurred: $e')));
+      ).showSnackBar(SnackBar(content: Text('Đã xảy ra lỗi: $e')));
     }
   }
 
@@ -773,7 +739,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     if (amountController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Please enter an amount')));
+      ).showSnackBar(const SnackBar(content: Text('Vui lòng nhập số tiền')));
       return ValidationResult(isValid: false);
     }
 
@@ -783,13 +749,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Invalid amount format')));
+      ).showSnackBar(const SnackBar(content: Text('Định dạng số tiền không hợp lệ')));
       return ValidationResult(isValid: false);
     }
 
     // Parse date
     DateTime date;
-    if (selectedDate == 'Today') {
+    if (selectedDate == 'Today' || selectedDate == 'Hôm nay') {
       date = DateTime.now();
     } else {
       try {
@@ -805,11 +771,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
 
     // Ensure account selection is valid
-    if (selectedAccount == 'Select Account' ||
+    if (selectedAccount == 'Chọn tài khoản' ||
+        selectedAccount == 'Select Account' ||
         selectedAccount == missingAccountPlaceholder) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Vui lòng chọn tài khoản hợp lệ')));
+      ).showSnackBar(const SnackBar(content: Text('Vui lòng chọn tài khoản hợp lệ')));
       return ValidationResult(isValid: false);
     }
 
@@ -985,7 +952,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     if (account.isActive != true) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Selected account is inactive')));
+      ).showSnackBar(const SnackBar(content: Text('Tài khoản đã chọn không hoạt động')));
       return;
     }
     double newBalance = account.balance;
