@@ -1,23 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:financy_ui/features/Users/Cubit/userCubit.dart';
-import 'package:financy_ui/app/services/Local/settings_service.dart';
-import 'package:financy_ui/features/auth/repository/authRepo.dart';
+import 'package:btl/features/Users/Cubit/userCubit.dart';
+import 'package:btl/app/services/Local/settings_service.dart';
+import 'package:btl/features/auth/repository/authRepo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:financy_ui/l10n/app_localizations.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
-
-  // Hàm tiện ích
-  String _localText(
-    BuildContext context,
-    String Function(AppLocalizations) getter,
-  ) {
-    final appLocal = AppLocalizations.of(context);
-    return appLocal != null ? getter(appLocal) : '';
-  }
 
   Future<void> _logout(BuildContext context) async {
     await Authrepo().logout();
@@ -27,11 +17,10 @@ class Settings extends StatelessWidget {
         '/expenseTracker',
         (route) => false,
       );
-      final appLocal = AppLocalizations.of(context);
       final theme = Theme.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(appLocal?.loggedOut ?? 'Logged out'),
+          content: const Text('Đã đăng xuất'),
           backgroundColor: theme.primaryColor,
         ),
       );
@@ -50,7 +39,7 @@ class Settings extends StatelessWidget {
           children: [
             _buildMenuItem(
               icon: Icons.translate,
-              title: _localText(context, (l) => l.language),
+              title: "Ngôn ngữ",
               iconColor: theme.primaryColor,
               onTap: () {
                 Navigator.pushNamed(context, '/languageSelection');
@@ -59,7 +48,7 @@ class Settings extends StatelessWidget {
             const SizedBox(height: 12),
             _buildMenuItem(
               icon: Icons.people,
-              title: _localText(context, (l) => l.manageCategory),
+              title: "Quản lý danh mục",
               iconColor: Colors.orange,
               onTap: () {
                 Navigator.pushNamed(context, '/manageCategory');
@@ -68,7 +57,7 @@ class Settings extends StatelessWidget {
             const SizedBox(height: 12),
             _buildMenuItem(
               icon: Icons.campaign,
-              title: _localText(context, (l) => l.systemTheme),
+              title: "Giao diện hệ thống",
               iconColor: Colors.red,
               onTap: () {
                 Navigator.pushNamed(context, '/interfaceSettings');
@@ -77,7 +66,7 @@ class Settings extends StatelessWidget {
             const SizedBox(height: 12),
             _buildMenuItem(
               icon: Icons.people_alt,
-              title: _localText(context, (l) => l.userManagement),
+              title: "Quản lý người dùng",
               iconColor: Colors.green,
               onTap: () {
                 Navigator.pushNamed(
@@ -90,7 +79,7 @@ class Settings extends StatelessWidget {
             const SizedBox(height: 12),
             _buildMenuItem(
               icon: Icons.account_balance_wallet,
-              title: _localText(context, (l) => l.account),
+              title: "Tài khoản",
               iconColor: Colors.teal,
               onTap: () {
                 Navigator.pushNamed(context, '/manageAccount');
@@ -99,7 +88,7 @@ class Settings extends StatelessWidget {
             const SizedBox(height: 12),
             _buildMenuItem(
               icon: Icons.notifications,
-              title: _localText(context, (l) => l.notification),
+              title: "Thông báo",
               iconColor: Colors.orange,
               hasNotification: true,
               onTap: () {
@@ -109,7 +98,7 @@ class Settings extends StatelessWidget {
             const SizedBox(height: 12),
             _buildMenuItem(
               icon: Icons.logout,
-              title: _localText(context, (l) => l.logout),
+              title: "Đăng xuất",
               iconColor: Colors.red,
               onTap: () => _logout(context),
             ),

@@ -1,13 +1,15 @@
 // ignore_for_file: file_names, deprecated_member_use
 
 import 'dart:developer';
-import 'package:financy_ui/app/cubit/themeCubit.dart';
-import 'package:financy_ui/core/constants/colors.dart';
-import 'package:financy_ui/shared/utils/color_utils.dart';
-import 'package:financy_ui/shared/utils/theme_utils.dart';
+import 'package:btl/app/cubit/themeCubit.dart';
+import 'package:btl/core/constants/colors.dart';
+import 'package:btl/shared/utils/color_utils.dart';
+import 'package:btl/shared/utils/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:financy_ui/l10n/app_localizations.dart';
+// Lưu ý: Đảm bảo package l10n của bạn đã được cấu hình đúng
+// Nếu chưa có file này, bạn có thể cần comment dòng dưới hoặc chạy flutter gen-l10n
+// import 'package:btl/l10n/app_localizations.dart';
 
 class InterfaceSettings extends StatefulWidget {
   const InterfaceSettings({super.key});
@@ -102,7 +104,7 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
     );
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(_localText((l) => l.saveSettings)),
+        content: Text(_localText((l) => "Save Settings")), // Tạm thời để text cứng nếu l10n chưa sẵn sàng
         backgroundColor: _colorThemes[_selectedColorTheme],
         duration: Duration(seconds: 2),
       ),
@@ -120,10 +122,12 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
     Navigator.pop(context);
   }
 
-  // Hàm tiện ích
-  String _localText(String Function(AppLocalizations) getter) {
-    final appLocal = AppLocalizations.of(context);
-    return appLocal != null ? getter(appLocal) : '';
+  // Hàm tiện ích - Mock tạm thời nếu AppLocalizations chưa có
+  String _localText(String Function(dynamic) getter) {
+    // Nếu bạn đã có AppLocalizations thì bỏ comment và dùng code cũ
+    // final appLocal = AppLocalizations.of(context);
+    // return appLocal != null ? getter(appLocal) : '';
+    return getter(null);
   }
 
   @override
@@ -137,12 +141,12 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: theme.appBarTheme.foregroundColor,
+            color: Colors.white,
           ),
           onPressed: back,
         ),
         title: Text(
-          _localText((l) => l.themeSettings),
+          "Cài đặt giao diện",
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -158,25 +162,20 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Theme Section
-              _buildSectionTitle(_localText((l) => l.theme)),
+              _buildSectionTitle("Chế độ tối/sáng"),
               _buildThemeSelector(),
               SizedBox(height: 24),
 
               // Color Theme Section
-              _buildSectionTitle(_localText((l) => l.primaryColor)),
+              _buildSectionTitle("Màu chủ đạo"),
               _buildColorThemeSelector(),
               SizedBox(height: 24),
 
               // Font Section
-              _buildSectionTitle(_localText((l) => l.fontFamily)),
+              _buildSectionTitle("Phông chữ"),
               _buildFontSelector(),
               SizedBox(height: 16),
               _buildFontSizeSlider(),
-              SizedBox(height: 24),
-
-              // Animation Section
-              _buildSectionTitle(_localText((l) => l.effect)),
-
               SizedBox(height: 24),
 
               // Action Buttons
@@ -209,17 +208,17 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
       ),
       child: Column(
         children: [
-          _buildRadioTile('Dark', _localText((l) => l.dark), Icons.dark_mode),
+          _buildRadioTile('Dark', "Tối", Icons.dark_mode),
           Divider(color: Colors.grey[600], height: 1),
           _buildRadioTile(
             'Light',
-            _localText((l) => l.light),
+            "Sáng",
             Icons.light_mode,
           ),
           Divider(color: Colors.grey[600], height: 1),
           _buildRadioTile(
             'System',
-            _localText((l) => l.system),
+            "Hệ thống",
             Icons.brightness_auto,
           ),
         ],
@@ -234,20 +233,12 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
       onChanged: selectedModeTheme,
       title: Row(
         children: [
-          Icon(icon, color: Theme.of(context).highlightColor, size: 20),
+          Icon(icon, color: Theme.of(context).hintColor, size: 20),
           SizedBox(width: 12),
           Text(title, style: Theme.of(context).textTheme.bodyMedium),
         ],
       ),
       activeColor: _colorThemes[_selectedColorTheme],
-      fillColor: WidgetStateProperty.resolveWith<Color?>((
-        Set<WidgetState> states,
-      ) {
-        if (states.contains(WidgetState.selected)) {
-          return _colorThemes[_selectedColorTheme];
-        }
-        return Colors.grey;
-      }),
     );
   }
 
@@ -284,16 +275,6 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
                             ? Icon(Icons.check, color: Colors.white, size: 24)
                             : null,
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    themeName,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white70,
-                      fontSize: 12,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -326,7 +307,7 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
           style: Theme.of(context).textTheme.bodyLarge,
           icon: Icon(
             Icons.keyboard_arrow_down,
-            color: Theme.of(context).highlightColor,
+            color: Theme.of(context).hintColor,
           ),
           items:
               fonts.map((String font) {
@@ -352,7 +333,7 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                _localText((l) => l.fontSize),
+                "Kích thước chữ",
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               Text(
@@ -400,7 +381,7 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
               ),
             ),
             child: Text(
-              _localText((l) => l.cancel),
+              "Hủy",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
@@ -420,7 +401,7 @@ class _InterfaceSettingsState extends State<InterfaceSettings> {
               ),
             ),
             child: Text(
-              _localText((l) => l.saveSettings),
+              "Lưu thay đổi",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
