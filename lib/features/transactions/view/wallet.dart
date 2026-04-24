@@ -2,17 +2,17 @@
 
 import 'dart:developer';
 
-import 'package:financy_ui/core/constants/colors.dart';
-import 'package:financy_ui/core/constants/money_source_icons.dart';
-import 'package:financy_ui/features/Account/cubit/manageMoneyCubit.dart';
-import 'package:financy_ui/features/Account/cubit/manageMoneyState.dart';
-import 'package:financy_ui/features/Account/models/money_source.dart';
-import 'package:financy_ui/features/transactions/Cubit/transactionCubit.dart';
-import 'package:financy_ui/features/transactions/Cubit/transctionState.dart';
-import 'package:financy_ui/features/transactions/models/transactionsModels.dart';
-import 'package:financy_ui/shared/utils/localText.dart';
-import 'package:financy_ui/shared/utils/mappingIcon.dart';
-import 'package:financy_ui/shared/utils/money_source_utils.dart';
+import 'package:btl/core/constants/colors.dart';
+import 'package:btl/core/constants/money_source_icons.dart';
+import 'package:btl/features/Account/cubit/manageMoneyCubit.dart';
+import 'package:btl/features/Account/cubit/manageMoneyState.dart';
+import 'package:btl/features/Account/models/money_source.dart';
+import 'package:btl/features/transactions/Cubit/transactionCubit.dart';
+import 'package:btl/features/transactions/Cubit/transctionState.dart';
+import 'package:btl/features/transactions/models/transactionsModels.dart';
+// import 'package:btl/shared/utils/localText.dart';
+import 'package:btl/shared/utils/mappingIcon.dart';
+import 'package:btl/shared/utils/money_source_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 
@@ -92,8 +92,8 @@ class _WalletState extends State<Wallet> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('No account exists'),
-            duration: Duration(seconds: 2),
+            content: const Text('Chưa có tài khoản nào'),
+            duration: const Duration(seconds: 2),
             backgroundColor: Theme.of(context).primaryColor,
           ),
         );
@@ -107,8 +107,6 @@ class _WalletState extends State<Wallet> {
     return BlocConsumer<TransactionCubit, TransactionState>(
       listener: (context, state) {
         if (state.status == TransactionStateStatus.success) {
-          // TransactionCubit đã tự fetch lại từ Hive và emit loaded,
-          // chỉ cần reload accounts để cập nhật balance mới nhất
           context.read<ManageMoneyCubit>().getAllAccount();
         }
       },
@@ -125,14 +123,14 @@ class _WalletState extends State<Wallet> {
               child: BlocBuilder<TransactionCubit, TransactionState>(
                 builder: (context, state) {
                   if (state.status == TransactionStateStatus.loading) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (state.status == TransactionStateStatus.error) {
-                    return Center(child: Text('Error loading transactions'));
+                    return const Center(child: Text('Lỗi khi tải giao dịch'));
                   }
                   if (state.transactionsList.isEmpty) {
                     return Center(
                       child: Text(
-                        LocalText.localText(context, (l) => l.noTransactions),
+                        'Không có giao dịch nào',
                         style: theme.textTheme.bodyMedium,
                       ),
                     );
@@ -141,7 +139,7 @@ class _WalletState extends State<Wallet> {
                     state.transactionsList,
                   );
                   return ListView.builder(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     itemCount: transactionsList.length,
                     itemBuilder: (context, index) {
                       final Transactionsmodels transaction =
@@ -149,7 +147,7 @@ class _WalletState extends State<Wallet> {
                       final isIncome =
                           transaction.type == TransactionType.income;
                       final amountStr = _formatAmount(transaction.amount);
-                      // Get category by name if needed for default categories
+                      
                       final categoryData = IconMapping.getCategoryByName(
                         transaction.categoriesId,
                       );
@@ -157,9 +155,9 @@ class _WalletState extends State<Wallet> {
                         categoryData?.icon ?? 'Home',
                       );
                       final iconColor = Color(
-                        int.parse(categoryData?.color ?? '0xFF000000'),
+                        int.parse(categoryData?.color ?? '0xFF2196F3'),
                       );
-                      final title = categoryData?.name ?? 'Unknown';
+                      final title = categoryData?.name ?? 'Chưa xác định';
                       return _buildTransactionItem(
                         context,
                         icon: iconData,
@@ -210,18 +208,18 @@ class _WalletState extends State<Wallet> {
         }
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: 16),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: iconColor.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: iconColor, size: 24),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,7 +230,7 @@ class _WalletState extends State<Wallet> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(subtitle, style: theme.textTheme.bodyMedium),
                 ],
               ),
@@ -245,15 +243,15 @@ class _WalletState extends State<Wallet> {
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color:
                         isPositive
-                            ? AppColors.positiveGreen
-                            : AppColors.negativeRed,
+                            ? AppColors.green
+                            : AppColors.red,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
-                  LocalText.localText(context, (l) => l.myWallet),
-                  style: theme.textTheme.bodySmall,
+                const SizedBox(height: 4),
+                const Text(
+                  'Ví của tôi',
+                  style: TextStyle(fontSize: 10, color: Colors.grey),
                 ),
               ],
             ),
@@ -278,24 +276,19 @@ class BalanceCard extends StatelessWidget {
     final theme = Theme.of(context);
     return BlocBuilder<ManageMoneyCubit, ManageMoneyState>(
       builder: (context, state) {
-        // Luôn ưu tiên lấy listAccounts từ cubit field vì nó luôn được cập nhật đồng bộ
-        // state.listAccounts có thể null trong một số trạng thái (loading, error, success không có accounts)
         final cubit = context.read<ManageMoneyCubit>();
         String currentAccountName = cubit.currentAccountName ?? '';
-        log(state.status.toString());
-
-        // Ưu tiên: state.listAccounts (nếu có) → cubit.listAccounts (field cache) → []
+        
         List<MoneySource> listAccounts =
             state.listAccounts ?? cubit.listAccounts ?? [];
 
         MoneySource? currentAccount;
         if (listAccounts.isNotEmpty) {
           if (currentAccountId != null) {
-            final found = listAccounts.firstWhere(
+            currentAccount = listAccounts.firstWhere(
               (acc) => acc.id == currentAccountId,
               orElse: () => listAccounts.first,
             );
-            currentAccount = found;
           } else {
             currentAccount = listAccounts.first;
           }
@@ -305,7 +298,7 @@ class BalanceCard extends StatelessWidget {
         // Lấy tổng thu nhập và chi tiêu theo tài khoản hiện tại
         double totalIncome = 0;
         double totalExpense = 0;
-        // Lấy transactionsList từ TransactionCubit
+        
         final transactionState = context.watch<TransactionCubit>().state;
         final allTransactions =
             transactionState.transactionsList.values.expand((e) => e).toList();
@@ -323,513 +316,108 @@ class BalanceCard extends StatelessWidget {
           }
         }
 
-        // Determine brand background and logo for current account
-        final Color fallbackColor = AppColors.primaryBlue;
+        final Color fallbackColor = theme.primaryColor;
         final Color onBrand = Colors.white;
-        final String? brandBackground =
-            currentAccount != null
-                ? MoneySourceBackgrounds.backgroundFor(currentAccount.name)
-                : null;
-        final String? brandAsset =
-            currentAccount != null
-                ? MoneySourceImages.assetFor(currentAccount.name)
-                : null;
 
         return Container(
-          margin: EdgeInsets.all(12),
+          margin: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            image:
-                brandBackground != null
-                    ? DecorationImage(
-                      image: AssetImage(brandBackground),
-                      fit: BoxFit.cover,
-                    )
-                    : null,
-            color:
-                brandBackground == null ? fallbackColor.withOpacity(0.8) : null,
+            color: fallbackColor,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.12),
-                blurRadius: 12,
-                offset: Offset(0, 6),
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
-          child: Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              // Add darker overlay to make text readable on background image
-              gradient:
-                  brandBackground != null
-                      ? LinearGradient(
-                        colors: [
-                          Colors.black.withOpacity(0.6),
-                          Colors.black.withOpacity(0.5),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
-                      : null,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Account Selector Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            LocalText.localText(context, (l) => l.myAccount),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: onBrand,
-                              fontWeight: FontWeight.w500,
-                              shadows:
-                                  brandBackground != null
-                                      ? [
-                                        Shadow(
-                                          color: Colors.black.withOpacity(0.5),
-                                          blurRadius: 4,
-                                          offset: Offset(0, 1),
-                                        ),
-                                      ]
-                                      : null,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Row(
-                            children: [
-                              if (brandAsset != null) ...[
-                                ClipOval(
-                                  child: Image.asset(
-                                    brandAsset,
-                                    width: 24,
-                                    height: 24,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                              ],
-                              Expanded(
-                                child: Text(
-                                  currentAccountName.isNotEmpty
-                                      ? currentAccountName
-                                      : '---',
-                                  style: theme.textTheme.titleLarge?.copyWith(
-                                    color: onBrand,
-                                    fontWeight: FontWeight.bold,
-                                    shadows:
-                                        brandBackground != null
-                                            ? [
-                                              Shadow(
-                                                color: Colors.black.withOpacity(
-                                                  0.7,
-                                                ),
-                                                blurRadius: 6,
-                                                offset: Offset(0, 2),
-                                              ),
-                                            ]
-                                            : null,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 6),
-                          if (currentAccount != null)
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color:
-                                    currentAccount.isActive
-                                        ? AppColors.positiveGreen
-                                        : AppColors.negativeRed,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                currentAccount.isActive
-                                    ? LocalText.localText(
-                                      context,
-                                      (l) => l.active,
-                                    )
-                                    : LocalText.localText(
-                                      context,
-                                      (l) => l.inactive,
-                                    ),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: onBrand,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    // Brand logo and Account Dropdown Button
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 2,
+                        Text(
+                          'Tài khoản của tôi',
+                          style: TextStyle(color: onBrand.withOpacity(0.8), fontSize: 12),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          currentAccountName.isNotEmpty ? currentAccountName : '---',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            color: onBrand,
+                            fontWeight: FontWeight.bold,
                           ),
-                          decoration: BoxDecoration(
-                            color:
-                                brandBackground != null
-                                    ? Colors.white.withOpacity(0.2)
-                                    : onBrand.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color:
-                                  brandBackground != null
-                                      ? Colors.white.withOpacity(0.4)
-                                      : onBrand.withOpacity(0.3),
-                              width: 1.5,
-                            ),
-                            boxShadow:
-                                brandBackground != null
-                                    ? [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.2),
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ]
-                                    : null,
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value:
-                                  currentAccountId ??
-                                  (listAccounts.isNotEmpty
-                                      ? listAccounts.first.id
-                                      : null),
-                              icon: Icon(
-                                Icons.keyboard_arrow_down,
-                                color: onBrand,
-                                size: 16,
-                              ),
-                              selectedItemBuilder: (BuildContext context) {
-                                return listAccounts.map((e) {
-                                  return Center(
-                                    child: Text(
-                                      e.name,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                        shadows:
-                                            brandBackground != null
-                                                ? [
-                                                  Shadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.5),
-                                                    blurRadius: 3,
-                                                    offset: Offset(0, 1),
-                                                  ),
-                                                ]
-                                                : null,
-                                      ),
-                                    ),
-                                  );
-                                }).toList();
-                              },
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: onBrand,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              dropdownColor: theme.cardColor,
-                              borderRadius: BorderRadius.circular(16),
-                              items:
-                                  listAccounts
-                                      .map(
-                                        (e) => DropdownMenuItem(
-                                          value: e.id,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              if (MoneySourceImages.assetFor(
-                                                    e.name,
-                                                  ) !=
-                                                  null)
-                                                ClipOval(
-                                                  child: Image.asset(
-                                                    MoneySourceImages.assetFor(
-                                                      e.name,
-                                                    )!,
-                                                    width: 18,
-                                                    height: 18,
-                                                    fit: BoxFit.contain,
-                                                  ),
-                                                )
-                                              else
-                                                Icon(
-                                                  MoneySourceIconColorMapper.iconFor(
-                                                    e.type.toString(),
-                                                  ),
-                                                  color:
-                                                      theme
-                                                          .textTheme
-                                                          .bodyMedium
-                                                          ?.color,
-                                                  size: 18,
-                                                ),
-                                              SizedBox(width: 6),
-                                              Flexible(
-                                                child: Text(
-                                                  e.name,
-                                                  style:
-                                                      theme
-                                                          .textTheme
-                                                          .bodyMedium,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                              onChanged: changeAccount,
-                            ),
-                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
-                  ],
-                ),
-                SizedBox(height: 16),
-
-                // Income and Expense Row
-                Row(
-                  children: [
-                    // Income Section
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color:
-                              brandBackground != null
-                                  ? Colors.white.withOpacity(0.15)
-                                  : AppColors.positiveGreen.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color:
-                                brandBackground != null
-                                    ? Colors.white.withOpacity(0.3)
-                                    : AppColors.positiveGreen.withOpacity(0.15),
-                            width: 1.5,
-                          ),
-                          boxShadow:
-                              brandBackground != null
-                                  ? [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      blurRadius: 6,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ]
-                                  : null,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        brandBackground != null
-                                            ? Colors.white.withOpacity(0.3)
-                                            : AppColors.positiveGreen
-                                                .withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Icon(
-                                    Icons.trending_up,
-                                    color:
-                                        brandBackground != null
-                                            ? Colors.white
-                                            : AppColors.positiveGreen,
-                                    size: 12,
-                                  ),
-                                ),
-                                SizedBox(width: 6),
-                                Flexible(
-                                  child: Text(
-                                    LocalText.localText(
-                                      context,
-                                      (l) => l.income,
-                                    ),
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: onBrand,
-                                      fontWeight: FontWeight.w600,
-                                      shadows:
-                                          brandBackground != null
-                                              ? [
-                                                Shadow(
-                                                  color: Colors.black
-                                                      .withOpacity(0.5),
-                                                  blurRadius: 3,
-                                                  offset: Offset(0, 1),
-                                                ),
-                                              ]
-                                              : null,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 6),
-                            Text(
-                              '+${totalIncome.toStringAsFixed(0)} VND',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: onBrand,
-                                fontWeight: FontWeight.bold,
-                                shadows:
-                                    brandBackground != null
-                                        ? [
-                                          Shadow(
-                                            color: Colors.black.withOpacity(
-                                              0.6,
-                                            ),
-                                            blurRadius: 4,
-                                            offset: Offset(0, 1),
-                                          ),
-                                        ]
-                                        : null,
-                              ),
-                            ),
-                          ],
-                        ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: currentAccountId ?? (listAccounts.isNotEmpty ? listAccounts.first.id : null),
+                        icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+                        dropdownColor: theme.cardColor,
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        items: listAccounts.map((e) => DropdownMenuItem(
+                          value: e.id,
+                          child: Text(e.name, style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+                        )).toList(),
+                        onChanged: changeAccount,
+                        selectedItemBuilder: (context) => listAccounts.map((e) => Center(child: Text(e.name, style: const TextStyle(color: Colors.white)))).toList(),
                       ),
                     ),
-                    SizedBox(width: 12),
-                    // Expense Section
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color:
-                              brandBackground != null
-                                  ? Colors.white.withOpacity(0.15)
-                                  : AppColors.negativeRed.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color:
-                                brandBackground != null
-                                    ? Colors.white.withOpacity(0.3)
-                                    : AppColors.negativeRed.withOpacity(0.15),
-                            width: 1.5,
-                          ),
-                          boxShadow:
-                              brandBackground != null
-                                  ? [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      blurRadius: 6,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ]
-                                  : null,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        brandBackground != null
-                                            ? Colors.white.withOpacity(0.3)
-                                            : AppColors.negativeRed.withOpacity(
-                                              0.2,
-                                            ),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Icon(
-                                    Icons.trending_down,
-                                    color:
-                                        brandBackground != null
-                                            ? Colors.white
-                                            : AppColors.negativeRed,
-                                    size: 12,
-                                  ),
-                                ),
-                                SizedBox(width: 6),
-                                Flexible(
-                                  child: Text(
-                                    LocalText.localText(
-                                      context,
-                                      (l) => l.expense,
-                                    ),
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: onBrand,
-                                      fontWeight: FontWeight.w600,
-                                      shadows:
-                                          brandBackground != null
-                                              ? [
-                                                Shadow(
-                                                  color: Colors.black
-                                                      .withOpacity(0.5),
-                                                  blurRadius: 3,
-                                                  offset: Offset(0, 1),
-                                                ),
-                                              ]
-                                              : null,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 6),
-                            Text(
-                              '-${totalExpense.toStringAsFixed(0)} VND',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: onBrand,
-                                fontWeight: FontWeight.bold,
-                                shadows:
-                                    brandBackground != null
-                                        ? [
-                                          Shadow(
-                                            color: Colors.black.withOpacity(
-                                              0.6,
-                                            ),
-                                            blurRadius: 4,
-                                            offset: Offset(0, 1),
-                                          ),
-                                        ]
-                                        : null,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  _buildBalanceInfo('Thu nhập', totalIncome, AppColors.green, Colors.white),
+                  const SizedBox(width: 12),
+                  _buildBalanceInfo('Chi tiêu', totalExpense, AppColors.red, Colors.white),
+                ],
+              ),
+            ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildBalanceInfo(String label, double amount, Color iconColor, Color textColor) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label, style: TextStyle(color: textColor.withOpacity(0.8), fontSize: 12)),
+            const SizedBox(height: 4),
+            Text(
+              '${amount.toStringAsFixed(0)} ₫',
+              style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 14),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
